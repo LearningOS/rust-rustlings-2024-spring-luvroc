@@ -3,7 +3,6 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -51,12 +50,55 @@ where
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
         //TODO
+        let mut myvec = vec![];
+        match &mut self.root {
+            None => {
+                self.root = Some(Box::new(TreeNode::new(value)));
+                return;
+            },
+            Some(any) => {
+                myvec.push(&mut any.left);
+                myvec.push(&mut any.right);
+            },
+        }
+        loop {
+            let  popvalue:&mut Option<Box<TreeNode<T>>> = myvec.pop().expect("no elem in vec");
+            match popvalue {
+                None => {
+                    *popvalue = Some(Box::new(TreeNode::new(value)));
+                    return;
+                }
+                Some(any) => {
+                    myvec.push(&mut any.left);
+                    myvec.push(&mut any.right);
+                }
+            }
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
         //TODO
-        true
+        let mut myvec = vec![];
+        myvec.push(&self.root);
+        loop {
+            let root = myvec.pop().expect("no elem in vec");
+            match root {
+                None => return false,
+                Some(ref any) => 
+                {
+                    if any.value == value {
+                        return true;
+                    }
+                    else {
+                        myvec.push(&any.left);
+                        myvec.push(&any.right);
+                    };
+                }
+ 
+            }
+            
+        }
     }
 }
 
@@ -67,6 +109,19 @@ where
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
         //TODO
+        // match self.left {
+        //     None => self.left = {
+        //         Some(Box::new(TreeNode::new(value)));
+        //         return
+        //     },
+        //     Some(any) => match self.right {
+        //         None => self.right = {
+        //             Some(Box::new(TreeNode::new(value)));
+        //             return
+        //         },
+        //         Some(any) =>()
+        //     }
+        // }
     }
 }
 
@@ -106,7 +161,6 @@ mod tests {
         let mut bst = BinarySearchTree::new();
 
         
-        bst.insert(1);
         bst.insert(1);
 
         

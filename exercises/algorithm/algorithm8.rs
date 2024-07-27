@@ -2,7 +2,6 @@
 	queue
 	This question requires you to use queues to implement the functionality of the stac
 */
-// I AM NOT DONE
 
 #[derive(Debug)]
 pub struct Queue<T> {
@@ -20,7 +19,7 @@ impl<T> Queue<T> {
         self.elements.push(value)
     }
 
-    pub fn dequeue(&mut self) -> Result<T, &str> {
+    pub fn dequeue(&mut self) -> Result<T, &'static str> {
         if !self.elements.is_empty() {
             Ok(self.elements.remove(0usize))
         } else {
@@ -28,7 +27,7 @@ impl<T> Queue<T> {
         }
     }
 
-    pub fn peek(&self) -> Result<&T, &str> {
+    pub fn peek(&self) -> Result<&T, &'static str> {
         match self.elements.first() {
             Some(value) => Ok(value),
             None => Err("Queue is empty"),
@@ -54,28 +53,47 @@ impl<T> Default for Queue<T> {
 
 pub struct myStack<T>
 {
-	//TODO
+	size:usize,
 	q1:Queue<T>,
 	q2:Queue<T>
 }
 impl<T> myStack<T> {
     pub fn new() -> Self {
         Self {
-			//TODO
+			size:0,
 			q1:Queue::<T>::new(),
 			q2:Queue::<T>::new()
         }
     }
     pub fn push(&mut self, elem: T) {
-        //TODO
+        self.size+=1;
+        self.q1.enqueue(elem);
+
     }
-    pub fn pop(&mut self) -> Result<T, &str> {
-        //TODO
-		Err("Stack is empty")
+    pub fn pop(& mut self) -> Result<T, & str> 
+    where T:Copy
+    {
+        if self.size == 0 {
+		return Err("Stack is empty");
+        }
+        else {
+            let tempsize = self.size;
+            let mut temp_queue = Queue::new();
+            let  q1:& mut Queue<T> = & mut self.q1;
+            while self.size > 1 {
+                let tempvalue:T = (*q1).dequeue()?;
+                temp_queue.enqueue(tempvalue);
+                self.size -= 1;
+            }
+            let ret = q1.peek()?.clone();
+            std::mem::swap(q1,&mut temp_queue);
+            self.q2.elements.clear();
+            self.size = tempsize -1;
+            Ok(ret)
+        }
     }
     pub fn is_empty(&self) -> bool {
-		//TODO
-        true
+		0 == self.size
     }
 }
 

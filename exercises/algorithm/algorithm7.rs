@@ -3,7 +3,6 @@
 	This question requires you to use a stack to achieve a bracket match
 */
 
-// I AM NOT DONE
 #[derive(Debug)]
 struct Stack<T> {
 	size: usize,
@@ -30,9 +29,17 @@ impl<T> Stack<T> {
 		self.data.push(val);
 		self.size += 1;
 	}
-	fn pop(&mut self) -> Option<T> {
-		// TODO
-		None
+	fn pop(&mut self) -> Option<T>
+	where T:Copy
+	{
+		if self.is_empty() {
+			None
+		}
+		else {
+			let anw = self.data.remove(self.data.len() - 1);
+			self.size-=1;
+			Some(anw.clone())
+		}
 	}
 	fn peek(&self) -> Option<&T> {
 		if 0 == self.size {
@@ -101,8 +108,56 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 
 fn bracket_match(bracket: &str) -> bool
 {
-	//TODO
-	true
+	let mut myStack = Stack::new();
+	for elem in bracket.chars() {
+		match elem {
+			'{' => {
+				myStack.push('{')
+			},
+			'('=> {
+				myStack.push('(')
+			},
+			'['=> {
+				myStack.push('[')
+			},
+			'}'=> {
+				if !myStack.is_empty() {
+					let temp = myStack.pop().expect("no elem");
+					if temp != '{' {
+						return false;
+					} 
+				}
+				else {
+					return false;
+				}
+			}
+			')'=> {
+				if !myStack.is_empty() {
+					let temp = myStack.pop().expect("no elem");
+					if temp != '(' {
+						return false;
+					} 
+				}
+				else {
+					return false;
+				}
+			},
+			']'=> {
+				if !myStack.is_empty() {
+					let temp = myStack.pop().expect("no elem");
+					if temp != '[' {
+						return false;
+					}
+				}
+				else {
+					return false;
+				} 
+			},
+			_ => ()
+		}
+	}
+	myStack.is_empty()
+	
 }
 
 #[cfg(test)]

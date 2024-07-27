@@ -2,12 +2,11 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
 use std::vec::*;
-
+use std::cmp::Ordering;
 #[derive(Debug)]
 struct Node<T> {
     val: T,
@@ -69,14 +68,91 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	pub fn merge(mut list_a:LinkedList<T>,mut list_b:LinkedList<T>) -> Self
+    where
+        T: std::cmp::PartialOrd + Copy
 	{
 		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+		// Self {
+        //     length: 0,
+        //     start: None,
+        //     end: None,
+        // }
+        let mut ret = LinkedList::<T>::new();
+        let mut tempA =0;
+        let mut tempB =0;
+        let longerFlag;
+        let mut iterA = match list_a.get(tempA) {
+            Some(any) => {
+                tempA+=1;
+                any
+            },
+            None => panic!()
+        };
+        
+        let mut iterB = match list_b.get(tempB) {
+            Some(any) => {
+                tempB+=1;
+                any
+            },
+            None => panic!()
+        };
+        loop {
+            
+            if iterA < iterB {
+                ret.add(iterA.clone());
+                iterA = match list_a.get(tempA) {
+                    Some(any) => {
+                        tempA+=1;
+                        any
+                    },
+                    None => {
+                        longerFlag = 'b';
+                        break;
+                    }
+                };
+                
+            }else {
+                ret.add(iterB.clone());
+                iterB = match list_b.get(tempB) {
+                    Some(any) => {
+                        tempB+=1;
+                        any
+                    },
+                    None => {
+                        longerFlag = 'a';
+                        break;
+                    }
+                };
+            }
         }
+        if longerFlag == 'a' {
+            tempA-=1;
+            loop {
+                
+                let iterA = match list_a.get(tempA) {
+                    Some(any) => any,
+                    None => {
+                        break;
+                    } 
+                };
+                ret.add(iterA.clone());
+                tempA+=1;
+            }
+        }else {
+            tempB-=1;
+            loop {
+                let iterB = match list_b.get(tempB) {
+                    Some(any) => any,
+                    None => {
+                        break;
+                    } 
+                };
+                ret.add(iterB.clone());
+                tempB+=1;
+            }
+        }
+        ret
 	}
 }
 
@@ -103,7 +179,14 @@ where
         }
     }
 }
-
+// impl<T:PartialOrd> PartialOrd for T {
+//     fn partial_cmp(&self,other: &Self) -> Option<Ordering> {
+//         match (self)  {
+//             i32 => self.partial_cmp(&other),
+//             _ => panic!()
+//         }
+//     }
+// }
 #[cfg(test)]
 mod tests {
     use super::LinkedList;
